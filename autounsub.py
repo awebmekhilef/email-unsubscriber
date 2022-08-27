@@ -3,6 +3,7 @@
 import ezgmail
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from urllib.parse import urlparse
 import bs4
 import re
 
@@ -11,16 +12,25 @@ ezgmail.init()
 browser = webdriver.Chrome()
 
 unsub_links = []
+unsub_hosts = []
 unsub_regex = re.compile('|'.join(['opt(\s|-)?out', 'unsubscribe']), re.IGNORECASE)
 
 # Retrieve all unsubscribe links
-for thread in ezgmail.recent(5):
+for thread in ezgmail.recent(100):
     for message in thread.messages:
         soup = bs4.BeautifulSoup(message.body, 'html.parser')
 
         for elem in soup.select('a'):
             if unsub_regex.search(elem.text):
-                unsub_links.append(elem.get('href'))
+                link = elem.get('href')
+                host = urlparse(link).netloc
+
+                # If we already have a link to the organization, skip it
+                if host in unsub_hosts:
+                    continue
+
+                unsub_hosts.append(host)
+                unsub_links.append(link)
 
 # Open the links in the browser
 for link in unsub_links:
