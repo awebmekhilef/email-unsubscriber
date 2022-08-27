@@ -8,7 +8,7 @@ import re
 ezgmail.init()
 
 unsub_links = []
-unsub_regex = re.compile('|'.join(['opt-out', 'unsubscribe']), re.IGNORECASE)
+unsub_regex = re.compile('|'.join(['opt(\s|-)?out', 'unsubscribe']), re.IGNORECASE)
 
 # Retrieve all unsubscribe links
 for thread in ezgmail.recent(5):
@@ -19,6 +19,6 @@ for thread in ezgmail.recent(5):
             if unsub_regex.search(elem.text):
                 unsub_links.append(elem.get('href'))
 
-# Open the links and perform try to unsubscribe
+# Open the links in the browser
 for link in unsub_links:
     webbrowser.open(link)
