@@ -1,11 +1,18 @@
 #! /usr/bin/env python3
+# autounsub.py - Scrapes your email threads to open all unsubscribe links and press them.
+# Usage: python autounsub.py <max-emails>
 
 import ezgmail
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from urllib.parse import urlparse
 import bs4
+import sys
 import re
+
+if len(sys.argv) < 2:
+    print('Usage: python autounsub.py <max-emails>')
+    sys.exit()
 
 ezgmail.init()
 
@@ -18,7 +25,7 @@ unsub_regex = re.compile('|'.join(['opt(\s|-)?out', 'unsubscribe']), re.IGNORECA
 num_unsub = 0
 
 # Retrieve all unsubscribe links
-for thread in ezgmail.recent(100):
+for thread in ezgmail.recent(int(sys.argv[1])):
     for message in thread.messages:
         soup = bs4.BeautifulSoup(message.body, 'html.parser')
 

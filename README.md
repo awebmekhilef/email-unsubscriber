@@ -10,4 +10,4 @@ Scrapes your email threads to open all unsubscribe links and press them.
 ### Usage
 1. (Optional) Initialize a virtual environment using: `python -m venv env`
 2. Run: `pip install -r requirements.txt`
-3. Run: `python autounsub.py`
+3. Run: `python autounsub.py <max-emails>`
