@@ -15,6 +15,8 @@ unsub_links = []
 unsub_hosts = []
 unsub_regex = re.compile('|'.join(['opt(\s|-)?out', 'unsubscribe']), re.IGNORECASE)
 
+num_unsub = 0
+
 # Retrieve all unsubscribe links
 for thread in ezgmail.recent(100):
     for message in thread.messages:
@@ -32,9 +34,13 @@ for thread in ezgmail.recent(100):
                 unsub_hosts.append(host)
                 unsub_links.append(link)
 
+                num_unsub += 1
+
 # Open the links in the browser
-for link in unsub_links:
+for i, link in enumerate(unsub_links):
     browser.get(link)
+
+    print(f'Unsubscribing from {browser.title} ({unsub_hosts[i]})')
 
     try:
         # In the case that you need to press a button to unsubscribe
@@ -42,3 +48,5 @@ for link in unsub_links:
         unsub_btn.click()
     except:
         pass
+
+input(f'Total unsubscriptions: {num_unsub}.\nPlease verify browser tabs. Press enter to exit...')
